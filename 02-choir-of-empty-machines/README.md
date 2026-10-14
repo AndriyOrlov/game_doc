@@ -13,6 +13,7 @@
 - [Візуальна мова](ART_DIRECTION.md)
 - [Звукова система](AUDIO_DESIGN.md)
 - [Реєстр ассетів](ASSETS.csv)
+- [Готові ассети і плагіни](ASSET_SOURCES.md)
 - [Інструменти](TOOLS.md)
 - [Обсяг і ризики](PRODUCTION.md)
 - [Перевірка задуму](PLAYTEST.md)
