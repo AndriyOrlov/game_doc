@@ -55,8 +55,8 @@ Megascans більше не безкоштовні для Unreal: нові ас�
 | --- | --- | --- | --- |
 | [Quartz](https://dev.epicgames.com/documentation/en-us/unreal-engine/quartz-overview-in-unreal-engine) | AUD-005: єдиний транспорт 96 BPM, вирівнювання атак і переходів фаз до такту з точністю до семпла | Вбудовано в Unreal | Unreal |
 | MetaSounds | AUD-001…005: процедурні голоси, удари, шари музики за фазами | Вбудовано в Unreal | Unreal |
-| [Project Acoustics](https://learn.microsoft.com/en-us/gaming/acoustics/what-is-acoustics) (Microsoft) — **обраний напрям** | AUD-004: хвильова симуляція залу. Оклюзія, обструкція, порталінг і реверберація без ручної розмітки зон, з дифракцією навколо колон | Безкоштовні бінарні плагіни; ліцензія коду [MIT, документації CC BY 4.0](https://github.com/AndriyOrlov/ProjectAcoustics) | Unreal Audio, Unreal/Wwise, Unity |
-| [Steam Audio](https://github.com/ValveSoftware/steam-audio) | Запасний варіант, якщо Project Acoustics не підійде за версією рушія або платформою: HRTF, відбиття і реверберація | Apache 2.0 | Unreal 4.27+ |
+| [Project Acoustics](https://learn.microsoft.com/en-us/gaming/acoustics/what-is-acoustics) (Microsoft) — **обрано разом зі Steam Audio (D005)** | AUD-004: хвильова симуляція залу. Оклюзія, обструкція, порталінг і реверберація без ручної розмітки зон, з дифракцією навколо колон | Безкоштовні бінарні плагіни; ліцензія коду [MIT, документації CC BY 4.0](https://github.com/AndriyOrlov/ProjectAcoustics) | Unreal Audio, Unreal/Wwise, Unity |
+| [Steam Audio](https://github.com/ValveSoftware/steam-audio) — **обрано разом із PA (D005)** | Бінауральний HRTF, запечений convolution-ревер залу з геометрії (гібридний режим), pathing; iOS з v4.5 | Apache 2.0, код відкритий — можна перезібрати під UE 5.8 | Unreal 4.27+, Unity, FMOD, Wwise |
 | [Wwise](https://www.audiokinetic.com/en/blog/free-wwise-indie-license) | Кандидат middleware, якщо нативного міксу забракне | Безкоштовно при бюджеті гри до $250 000, без ліміту ассетів | Unreal, Unity, Godot |
 | [FMOD Studio](https://www.gamedeveloper.com/audio/small-developers-and-creators-can-now-use-fmod-studio-for-free) | Те саме, альтернатива Wwise | Безкоштовно при річному доході до $200 000 і бюджеті до $500 000 (умови 2020 року, звірити на fmod.com/legal) | Unreal, Unity |
 | [Sonniss GDC 2026 Game Audio Bundle](https://rekkerd.org/sonniss-releases-gdc-2026-game-audio-bundle/) | AUD-001…004: понад 7,47 ГБ ефектів (метал, механізми, простори) | Royalty-free, без атрибуції | Будь-який |
@@ -72,12 +72,14 @@ Megascans більше не безкоштовні для Unreal: нові ас�
 - **Платформи.** Рантайм: Windows, Xbox, Android, macOS. Редактор: тільки Windows. **iOS у списку немає**, а iPhone — цільова платформа продажу (O002). Це головний ризик рішення.
 - **Підтримка.** Програма доступу до вихідного коду закрита для нових партнерів; публічні бінарні інструменти лишаються доступними й підтримуваними.
 
+**Оновлення 15.10.2026:** команда перенесла PA на UE 5.8 (D005). Пропонований розподіл ролей (P004): PA відповідає за оклюзію, дифракцію й порталінг (голос за перегородкою в передзалі, звук через ворота), Steam Audio — за HRTF-спатіалізацію і запечений convolution-ревер залу. В Unreal кожен тип аудіоплагіна (спатіалізація, реверберація, оклюзія) обирається один на платформу, тож перекриття вимикаємо явно. На iPhone працює лише Steam Audio.
+
 Перевірка перед закріпленням рішення: тестова сцена з залу (три джерела, колони, ніші) у поточній версії UE, локальний бейк, порівняння з нативною реверберацією та Steam Audio, окремо — чи є шлях для iPhone.
 
 ## Порядок підключення
 
 1. **Зараз, без витрат часу на інтеграцію:** перевірити бібліотеку Fab і Vault у Launcher (чи є Project Acoustics for Unreal Audio), скачати Sonniss і LABS, підібрати CC0-матеріали.
-2. **Етап 0 (звук і transport):** Quartz + MetaSounds + Project Acoustics на тестовій сцені залу. Steam Audio — якщо Project Acoustics не запрацює в обраній версії UE або не закриє iPhone.
+2. **Етап 0 (звук і transport):** Quartz + MetaSounds + Project Acoustics і Steam Audio на тестовій сцені залу з розподілом ролей P004.
 3. **Етап 1 (бій на 5–10 хв):** GASP або Mixamo для руху й атак, Logic Driver Lite для фаз боса.
 4. **Етап 2 (еталонна арена):** PCG для труб і ярусів, скани облич зі Smithsonian як основа, FlowGraph для сценарних станів.
 5. Wwise чи FMOD — лише після того, як Етап 0 покаже конкретну проблему нативного рішення.
