@@ -55,16 +55,29 @@ Megascans більше не безкоштовні для Unreal: нові ас�
 | --- | --- | --- | --- |
 | [Quartz](https://dev.epicgames.com/documentation/en-us/unreal-engine/quartz-overview-in-unreal-engine) | AUD-005: єдиний транспорт 96 BPM, вирівнювання атак і переходів фаз до такту з точністю до семпла | Вбудовано в Unreal | Unreal |
 | MetaSounds | AUD-001…005: процедурні голоси, удари, шари музики за фазами | Вбудовано в Unreal | Unreal |
-| [Steam Audio](https://github.com/ValveSoftware/steam-audio) | AUD-004: HRTF, відбиття і реверберація залу | Apache 2.0 | Unreal 4.27+ |
+| [Project Acoustics](https://learn.microsoft.com/en-us/gaming/acoustics/what-is-acoustics) (Microsoft) — **обраний напрям** | AUD-004: хвильова симуляція залу. Оклюзія, обструкція, порталінг і реверберація без ручної розмітки зон, з дифракцією навколо колон | Безкоштовні бінарні плагіни; ліцензія коду [MIT, документації CC BY 4.0](https://github.com/AndriyOrlov/ProjectAcoustics) | Unreal Audio, Unreal/Wwise, Unity |
+| [Steam Audio](https://github.com/ValveSoftware/steam-audio) | Запасний варіант, якщо Project Acoustics не підійде за версією рушія або платформою: HRTF, відбиття і реверберація | Apache 2.0 | Unreal 4.27+ |
 | [Wwise](https://www.audiokinetic.com/en/blog/free-wwise-indie-license) | Кандидат middleware, якщо нативного міксу забракне | Безкоштовно при бюджеті гри до $250 000, без ліміту ассетів | Unreal, Unity, Godot |
 | [FMOD Studio](https://www.gamedeveloper.com/audio/small-developers-and-creators-can-now-use-fmod-studio-for-free) | Те саме, альтернатива Wwise | Безкоштовно при річному доході до $200 000 і бюджеті до $500 000 (умови 2020 року, звірити на fmod.com/legal) | Unreal, Unity |
 | [Sonniss GDC 2026 Game Audio Bundle](https://rekkerd.org/sonniss-releases-gdc-2026-game-audio-bundle/) | AUD-001…004: понад 7,47 ГБ ефектів (метал, механізми, простори) | Royalty-free, без атрибуції | Будь-який |
 | [Spitfire LABS: Choir](https://www.audiotechnology.com/free-stuff/labs-choir) і [Pipe Organ](https://sonicstate.com/amped/2021/03/08/free-pipe-organ-instrument) | AUD-005: хор і орган для музичних шарів | Безкоштовно; музика для ігор royalty-free, заборонено робити з них власні бібліотеки семплів ([умови](https://support.spitfireaudio.com/en/articles/11815239-are-spitfire-audio-sample-libraries-royalty-free-and-can-i-use-them-on-commercial-recordings)) | DAW (VST/AU) |
 
+### Project Acoustics: що з’ясовано
+
+Форк [AndriyOrlov/ProjectAcoustics](https://github.com/AndriyOrlov/ProjectAcoustics) — це незмінена копія репозиторію Microsoft: README, CHANGELOG і ліцензії, без коду плагіна, власних налаштувань чи бейків. Останній коміт там від 17.11.2022. Сам плагін ставиться окремо.
+
+- **Остання версія — 2022.1 (листопад 2022).** Підтримка UE 5.1, просторова реверберація в Unreal Audio, спатіалайзер FLEX, параметри доступні в MetaSounds, Wwise 2022.1. Новіших релізів у репозиторії немає, тож сумісність із UE 5.4+ треба перевірити на тестовій сцені.
+- **Де взяти.** Плагін для Unreal Audio виходив на Unreal Marketplace, але продавець не переніс його на Fab: лістинг доступний лише у Vault Epic Games Launcher тим, хто отримав його раніше. Unreal+Wwise і Unity — з [Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=58090).
+- **Бейк.** Pre-bake у редакторі, потім симуляція в Azure Batch ([налаштування акаунта](https://learn.microsoft.com/en-us/gaming/acoustics/create-azure-account)) або локально через [Docker-образ Bake Tools](https://hub.docker.com/r/microsoft/acoustics-baketools). За бюджету 0 — локальний бейк; Azure коштує грошей.
+- **Платформи.** Рантайм: Windows, Xbox, Android, macOS. Редактор: тільки Windows. **iOS у списку немає**, а iPhone — цільова платформа продажу (O002). Це головний ризик рішення.
+- **Підтримка.** Програма доступу до вихідного коду закрита для нових партнерів; публічні бінарні інструменти лишаються доступними й підтримуваними.
+
+Перевірка перед закріпленням рішення: тестова сцена з залу (три джерела, колони, ніші) у поточній версії UE, локальний бейк, порівняння з нативною реверберацією та Steam Audio, окремо — чи є шлях для iPhone.
+
 ## Порядок підключення
 
-1. **Зараз, без витрат часу на інтеграцію:** перевірити бібліотеку Fab, скачати Sonniss і LABS, підібрати CC0-матеріали.
-2. **Етап 0 (звук і transport):** Quartz + MetaSounds. Steam Audio — тільки якщо нативна реверберація не дає залу.
+1. **Зараз, без витрат часу на інтеграцію:** перевірити бібліотеку Fab і Vault у Launcher (чи є Project Acoustics for Unreal Audio), скачати Sonniss і LABS, підібрати CC0-матеріали.
+2. **Етап 0 (звук і transport):** Quartz + MetaSounds + Project Acoustics на тестовій сцені залу. Steam Audio — якщо Project Acoustics не запрацює в обраній версії UE або не закриє iPhone.
 3. **Етап 1 (бій на 5–10 хв):** GASP або Mixamo для руху й атак, Logic Driver Lite для фаз боса.
 4. **Етап 2 (еталонна арена):** PCG для труб і ярусів, скани облич зі Smithsonian як основа, FlowGraph для сценарних станів.
 5. Wwise чи FMOD — лише після того, як Етап 0 покаже конкретну проблему нативного рішення.
