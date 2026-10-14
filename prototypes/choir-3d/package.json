@@ -1,0 +1,9 @@
+{
+  "name": "choir-3d",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Хор порожніх машин — 3D вертикальний зріз (Three.js, Web Audio)",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": { "three": "0.160.0" },
+  "devDependencies": { "esbuild": "^0.24.0" }
+}

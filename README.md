@@ -25,6 +25,12 @@
 ## Видання для перегляду
 [Ілюстрований GDD: PDF](exports/Choir_of_Empty_Machines_GDD_v0_1.pdf) · [Редагований DOCX](exports/Choir_of_Empty_Machines_GDD_v0_1.docx)
 
+## 3D вертикальний зріз 0.2
+
+[Код і запуск](prototypes/choir-3d/README.md) · `prototypes/choir-3d/dist/index.html` відкривається офлайн
+
+Справжня 3D-арена за GDD v0.1: міст, передзал із резонатором-головоломкою, поріг із навчанням, катсцена входу, три фази боса на 96 BPM, долоня і фінал. Перспективна камера, світло й тіні, просторові голоси, удар у долю, сенсорне керування з плаваючим стіком, шар левел-дизайну (H). Ще не перевірено на реальному iPhone.
+
 ## Вебпрототип 0.1
 
 [Грати](https://choir-of-empty-machines.theorli4.chatgpt.site) · [Код і запуск](prototypes/choir-web/README.md)

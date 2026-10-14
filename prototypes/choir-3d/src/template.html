@@ -1,0 +1,359 @@
+<title>Хор порожніх машин</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Forum&family=Alegreya+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed 3D view; HUD pinned to the four corners like an instrument panel; menus are left-weighted sheets over the hall. */
+:root {
+  --soot: #0b0d0e;
+  --panel: rgba(10, 12, 13, 0.72);
+  --line: rgba(233, 225, 211, 0.16);
+  --bone: #e9e1d3;
+  --dim: #a59d90;
+  --teal: #63c4ba;
+  --amber: #f0b257;
+  --copper: #b97a43;
+  --danger: #d0584c;
+  --display: 'Forum', 'Cormorant Garamond', Georgia, serif;
+  --body: 'Alegreya Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  --gx: max(16px, env(safe-area-inset-left, 0px));
+  --gr: max(16px, env(safe-area-inset-right, 0px));
+  --gt: max(14px, env(safe-area-inset-top, 0px));
+  --gb: max(14px, env(safe-area-inset-bottom, 0px));
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--soot); color: var(--bone); font-family: var(--body); overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: var(--soot); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+
+/* vignette + damage flash */
+#vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 55%, transparent 55%, rgba(0,0,0,0.55) 100%); }
+#vignette.hit { animation: hit 0.5s ease-out; }
+@keyframes hit { 0% { box-shadow: inset 0 0 0 9999px rgba(208,88,76,0.28); } 100% { box-shadow: inset 0 0 0 9999px rgba(208,88,76,0); } }
+#fade { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 0.6s; }
+
+/* ---------------- HUD ---------------- */
+#hud { position: fixed; inset: 0; pointer-events: none; padding-left: var(--gx); padding-right: var(--gr); padding-block: var(--gt) var(--gb); transition: opacity 0.4s; }
+body.cine #hud .hud-corner, body.cine #hud .actions, body.cine #touch, body.cine #hud .boss, body.cine #hud .prompt { opacity: 0; }
+.hud-corner { position: absolute; display: grid; gap: 6px; transition: opacity 0.4s; }
+.hero-panel { top: var(--gt); left: var(--gx); }
+.hp { display: flex; gap: 5px; }
+.hp i { width: 24px; height: 10px; background: var(--teal); transform: skewX(-20deg); box-shadow: 0 0 10px rgba(99,196,186,0.45); transition: background 0.2s, box-shadow 0.2s; }
+.hp i.lost { background: transparent; box-shadow: inset 0 0 0 1px rgba(99,196,186,0.35); }
+.res { display: flex; align-items: center; gap: 8px; }
+.res-track { position: relative; width: 150px; height: 5px; background: rgba(233,225,211,0.1); }
+#res-fill { height: 100%; width: 0; background: linear-gradient(90deg, #3d8f88, var(--teal)); transition: width 0.15s; }
+.res-track.ready #res-fill { box-shadow: 0 0 10px var(--teal); }
+.res-track .tick { position: absolute; top: -3px; width: 1px; height: 11px; background: var(--bone); opacity: 0.55; }
+#res-val { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 2.2em; color: var(--teal); }
+.objective { top: var(--gt); right: calc(var(--gr) + 46px); text-align: right; max-width: min(320px, 42vw); }
+#objective { font-family: var(--display); font-size: 19px; line-height: 1.15; text-wrap: balance; }
+.objective.flash #objective { animation: obj 1.4s ease-out; }
+@keyframes obj { 0% { color: var(--amber); } 100% { color: var(--bone); } }
+#btn-menu { position: absolute; top: var(--gt); right: var(--gr); pointer-events: auto; width: 34px; height: 34px; border: 1px solid var(--line); background: var(--panel); border-radius: 50%; font-family: var(--mono); font-size: 12px; letter-spacing: -0.05em; }
+
+.boss { position: absolute; top: var(--gt); left: 50%; transform: translateX(-50%); width: min(420px, 46vw); display: grid; gap: 5px; transition: opacity 0.4s; }
+.boss-head { display: flex; justify-content: space-between; align-items: baseline; }
+.boss-name { font-family: var(--display); font-size: 20px; letter-spacing: 0.04em; }
+.phase { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--amber); text-transform: uppercase; }
+.boss-track { position: relative; height: 7px; background: rgba(233,225,211,0.1); }
+#boss-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--copper), #e9d6b8); transition: width 0.25s; }
+.boss-track .tick { position: absolute; top: -4px; width: 2px; height: 15px; background: var(--soot); box-shadow: 0 0 0 1px rgba(233,225,211,0.4); }
+.boss-meta { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--dim); }
+#voice { color: var(--bone); }
+#pattern { font-style: italic; flex: 1; text-align: center; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.beats { display: flex; gap: 5px; }
+.beats i { width: 7px; height: 7px; border-radius: 50%; background: rgba(233,225,211,0.18); transition: background 0.08s; }
+.beats i.on { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.beats i:first-child.on { background: #fff1d6; }
+
+.prompt { position: absolute; left: 50%; bottom: calc(var(--gb) + 24%); transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line); padding: 7px 14px; font-size: 15px; white-space: nowrap; display: flex; gap: 9px; align-items: center; }
+.prompt b { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--soot); background: var(--amber); padding: 2px 7px; border-radius: 3px; }
+.toast { position: absolute; left: 50%; top: 31%; transform: translate(-50%, 6px); font-family: var(--display); font-size: 21px; color: var(--bone); text-shadow: 0 2px 12px #000; opacity: 0; transition: opacity 0.25s, transform 0.25s; text-align: center; max-width: 80vw; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.banner { position: fixed; left: 50%; top: 20%; transform: translateX(-50%); text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.5s; padding-inline: 16px; }
+.banner.on { opacity: 1; }
+.b-title { font-family: var(--display); font-size: clamp(34px, 5vw, 60px); letter-spacing: 0.03em; text-shadow: 0 4px 30px rgba(0,0,0,0.9); }
+.b-sub { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-top: 4px; }
+.subtitle { position: absolute; left: 50%; bottom: calc(var(--gb) + 4px); transform: translateX(-50%); width: min(520px, calc(100vw - 32px)); text-align: center; opacity: 0; transition: opacity 0.35s; display: grid; gap: 3px; }
+.subtitle.on { opacity: 1; }
+#speaker { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); }
+#line { font-size: 19px; line-height: 1.35; text-shadow: 0 2px 10px #000, 0 0 2px #000; text-wrap: balance; }
+
+.actions { position: absolute; right: var(--gr); bottom: var(--gb); display: flex; gap: 6px; transition: opacity 0.4s; }
+.act { pointer-events: none; border: 1px solid var(--line); background: var(--panel); padding: 6px 9px; display: grid; gap: 2px; justify-items: center; min-width: 54px; }
+.act span { font-size: 12px; color: var(--dim); }
+.act kbd { font-family: var(--mono); font-size: 11px; color: var(--bone); }
+.actions.res-ready .act[data-act="part"] { border-color: var(--teal); box-shadow: 0 0 12px rgba(99,196,186,0.4); }
+.actions.dodge-cd .act[data-act="dodge"] { opacity: 0.45; }
+.transport { position: absolute; left: var(--gx); bottom: var(--gb); font-family: var(--mono); font-size: 11px; color: var(--dim); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+#fps { color: var(--amber); margin-left: 10px; }
+
+/* touch: floating stick on the left, action arc around «Удар» on the right */
+#touch { position: fixed; inset: 0; pointer-events: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+#stickzone { position: absolute; left: 0; bottom: 0; width: 50%; height: 62%; pointer-events: auto; touch-action: none; }
+#stick { position: absolute; left: calc(var(--gx) + 80px); top: calc(100% - var(--gb) - 96px); width: 128px; height: 128px; margin: -64px 0 0 -64px; border-radius: 50%; border: 1px solid var(--line); background: rgba(10,12,13,0.3); opacity: 0.45; transition: opacity 0.2s; pointer-events: none; }
+#stick.live { opacity: 1; transition: none; }
+#stick-knob { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(233,225,211,0.2); border: 1px solid rgba(233,225,211,0.5); }
+body.is-touch .actions { display: block; position: absolute; right: 0; bottom: 0; width: 300px; height: 260px; pointer-events: none; }
+body.is-touch .act { pointer-events: auto; position: absolute; border-radius: 50%; padding: 0; min-width: 0; display: grid; place-items: center; align-content: center; touch-action: none; -webkit-user-select: none; user-select: none; background: rgba(10,12,13,0.55); border: 1.5px solid rgba(233,225,211,0.28); }
+body.is-touch .act kbd { display: none; }
+body.is-touch .act span { font-size: 12px; color: var(--bone); font-weight: 500; }
+body.is-touch .act.on { background: rgba(240,178,87,0.4); transform: scale(0.94); }
+body.is-touch .act[data-act="attack"] { width: 96px; height: 96px; right: calc(var(--gr) + 8px); bottom: calc(var(--gb) + 22px); border-color: var(--amber); border-width: 2px; }
+body.is-touch .act[data-act="attack"] span { font-size: 15px; }
+body.is-touch .act[data-act="dodge"] { width: 74px; height: 74px; right: calc(var(--gr) + 122px); bottom: calc(var(--gb) + 10px); }
+body.is-touch .act[data-act="parry"] { width: 74px; height: 74px; right: calc(var(--gr) + 18px); bottom: calc(var(--gb) + 134px); border-color: rgba(99,196,186,0.6); }
+body.is-touch .act[data-act="part"] { width: 66px; height: 66px; right: calc(var(--gr) + 112px); bottom: calc(var(--gb) + 108px); background: conic-gradient(rgba(99,196,186,0.45) calc(var(--res, 0) * 360deg), rgba(10,12,13,0.55) 0); }
+body.is-touch .actions.res-ready .act[data-act="part"] { border-color: var(--teal); }
+body.is-touch .act[data-act="act"] { width: 66px; height: 66px; right: calc(var(--gr) + 206px); bottom: calc(var(--gb) + 58px); border-color: var(--amber); display: none; }
+body.is-touch .actions.has-act .act[data-act="act"] { display: grid; }
+body.is-touch .actions.dodge-cd .act[data-act="dodge"] { opacity: 0.4; }
+body.is-touch .transport { display: none; }
+body.is-touch .prompt { bottom: calc(var(--gb) + 270px); }
+body.is-touch .subtitle { bottom: calc(var(--gb) + 250px); }
+body.is-touch #btn-menu { width: 44px; height: 44px; }
+body.is-touch .objective { right: calc(var(--gr) + 54px); }
+body:not(.is-touch) #touch { display: none; }
+.beats.hit i { background: #fff1d6 !important; box-shadow: 0 0 12px var(--amber); }
+@media (orientation: portrait) {
+  body.is-touch .subtitle { bottom: auto; top: calc(var(--gt) + 112px); }
+  body.is-touch.in-fight .subtitle { top: calc(var(--gt) + 196px); }
+  body.is-touch .prompt { bottom: calc(var(--gb) + 250px); }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  body.is-touch.in-fight .objective { display: none; }
+  body.is-touch .boss { width: min(380px, 44vw); }
+  body.is-touch .subtitle { bottom: calc(var(--gb) + 8px); width: min(420px, 50vw); }
+  body.is-touch .prompt { bottom: calc(var(--gb) + 120px); }
+  #stickzone { height: 80%; width: 45%; }
+}
+
+/* letterbox */
+#letterbox .lb { position: fixed; left: 0; right: 0; height: 10vh; background: #000; transition: transform 0.6s cubic-bezier(.2,.7,.2,1); z-index: 5; }
+#letterbox .top { top: 0; transform: translateY(-100%); }
+#letterbox .bottom { bottom: 0; transform: translateY(100%); display: flex; align-items: center; justify-content: flex-end; padding-right: var(--gr); padding-left: var(--gx); }
+#letterbox.on .lb { transform: none; }
+#skip { font-family: var(--mono); font-size: 11px; color: var(--dim); letter-spacing: 0.08em; }
+
+/* ---------------- screens ---------------- */
+.screen { position: fixed; inset: 0; z-index: 10; padding-left: var(--gx); padding-right: var(--gr); padding-block: var(--gt) var(--gb); overflow-y: auto; }
+.title { background: linear-gradient(90deg, rgba(8,9,10,0.94) 0%, rgba(8,9,10,0.8) 36%, rgba(8,9,10,0.15) 72%, rgba(8,9,10,0) 100%); display: flex; align-items: center; }
+.title-col { max-width: 540px; display: grid; gap: 18px; padding-block: 24px; }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); }
+.title h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px, 7.4vw, 96px); line-height: 0.92; margin: 0; letter-spacing: 0.005em; text-wrap: balance; }
+.title h1 em { font-style: normal; color: var(--amber); }
+.lede { font-size: 19px; line-height: 1.45; color: var(--bone); margin: 0; max-width: 34ch; }
+.route { display: flex; flex-wrap: wrap; gap: 6px 10px; font-family: var(--mono); font-size: 11.5px; color: var(--dim); align-items: center; }
+.route span:not(.arr) { border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+.route .arr { color: var(--copper); }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { border: 1px solid var(--amber); background: var(--amber); color: #1a1209; padding: 11px 22px; font-size: 16px; font-weight: 700; letter-spacing: 0.02em; }
+.btn:hover { background: #f6c47a; }
+.btn.ghost { background: transparent; color: var(--bone); border-color: var(--line); font-weight: 500; }
+.btn.ghost:hover { border-color: var(--bone); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; color: var(--dim); }
+.opts label { display: inline-flex; gap: 7px; align-items: center; cursor: pointer; }
+.opts input { accent-color: var(--teal); width: 16px; height: 16px; }
+.keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 22px; margin: 0; font-size: 14px; }
+.keys div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid rgba(233,225,211,0.08); padding-bottom: 4px; min-width: 0; }
+.keys dt { color: var(--dim); }
+.keys dd { margin: 0; font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.foot { font-size: 12.5px; color: var(--dim); line-height: 1.5; margin: 0; max-width: 52ch; }
+.center { display: grid; place-items: center; text-align: center; }
+.sheet { width: min(480px, 100%); background: var(--panel); border: 1px solid var(--line); padding: 18px 20px 16px; display: grid; gap: 12px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.sheet h2 { font-family: var(--display); font-weight: 400; font-size: 30px; margin: 0; }
+.sheet p { margin: 0; color: var(--dim); line-height: 1.45; }
+.toggles { display: grid; gap: 10px; font-size: 15px; }
+.toggles label { display: flex; gap: 10px; align-items: center; cursor: pointer; }
+.toggles input { accent-color: var(--teal); width: 17px; height: 17px; }
+.toggles .lat input { width: auto; flex: 1; min-width: 0; }
+#p-lat-v { font-family: var(--mono); font-size: 12px; min-width: 4.5em; text-align: right; font-variant-numeric: tabular-nums; }
+.toggles .hint { font-size: 13px; margin: -4px 0 0; }
+#pause { background: rgba(8,9,10,0.6); display: grid; place-items: center; }
+#dead { background: radial-gradient(ellipse at center, rgba(40,10,8,0.55), rgba(0,0,0,0.75)); }
+#dead h2 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 72px); margin: 0; }
+#dead p { color: var(--dim); font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+#end { background: linear-gradient(180deg, rgba(8,9,10,0.4), rgba(8,9,10,0.9)); display: grid; place-items: center; }
+.end-col { width: min(560px, 100%); display: grid; gap: 18px; }
+.end-col blockquote { margin: 0; font-family: var(--display); font-size: clamp(34px, 5vw, 54px); line-height: 1.05; }
+.end-col cite { display: block; font-family: var(--mono); font-style: normal; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-top: 8px; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.stats div { background: rgba(10,12,13,0.92); padding: 10px 10px 9px; display: grid; gap: 3px; min-width: 0; }
+.stats b { font-family: var(--mono); font-weight: 500; font-size: 20px; font-variant-numeric: tabular-nums; }
+.stats span { font-size: 12px; color: var(--dim); }
+
+/* puzzle */
+#puzzle { position: fixed; right: var(--gr); bottom: calc(var(--gb) + 64px); z-index: 8; width: min(440px, calc(100vw - 32px)); }
+@media (max-width: 720px) { #puzzle { right: auto; left: 50%; transform: translateX(-50%); } }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.slot { height: 54px; border: 1px dashed var(--line); display: grid; place-items: center; align-content: center; gap: 4px; }
+.slot.full { border-style: solid; border-color: rgba(99,196,186,0.5); }
+.slot em { font-style: normal; font-size: 12px; color: var(--dim); }
+.reg { display: grid; gap: 3px; }
+.reg i { display: block; width: 30px; height: 4px; background: var(--teal); }
+.reg.r0 i:nth-child(n+2), .reg.r1 i:nth-child(3) { display: none; }
+.regs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.regs button { border: 1px solid var(--line); background: rgba(233,225,211,0.04); padding: 12px 6px 10px; display: grid; justify-items: center; gap: 7px; }
+.regs button:hover { border-color: var(--teal); }
+.regs small { font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
+.prow { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
+.prow .btn { padding: 8px 14px; font-size: 14px; }
+#p-msg { min-height: 1.4em; color: var(--amber); font-size: 14px; }
+#boot-error { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 20; background: #2a1210; border: 1px solid var(--danger); padding: 12px 14px; font-size: 14px; }
+
+@media (max-width: 1180px) { body:not(.is-touch) .subtitle { bottom: calc(var(--gb) + 62px); } }
+@media (max-width: 720px) {
+  .title { background: rgba(8,9,10,0.82); align-items: flex-start; }
+  .keys { grid-template-columns: minmax(0, 1fr); }
+  .objective { max-width: 46vw; }
+  #objective { font-size: 16px; }
+  .boss { top: calc(var(--gt) + 96px); width: calc(100vw - 32px); }
+  .toast { top: 40%; }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lede { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #vignette.hit, .objective.flash #objective { animation: none; }
+  .toast, .banner, .subtitle, #letterbox .lb { transition: none; }
+}
+</style>
+
+<canvas id="view" aria-label="Тривимірна сцена: акустичний зал"></canvas>
+<div id="vignette"></div>
+
+<div id="hud" hidden>
+  <section class="hud-corner hero-panel" aria-label="Стан Носія">
+    <div class="label">Носій · 07</div>
+    <div id="hp" class="hp"></div>
+    <div class="res"><div class="res-track"><div id="res-fill"></div><span class="tick" style="left:40%"></span><span class="tick" style="left:80%"></span></div><span id="res-val">0</span></div>
+    <div class="label">Резонанс · партія = 40</div>
+  </section>
+  <section id="boss" class="boss" hidden aria-label="Три обличчя">
+    <div class="boss-head"><span class="boss-name">Три обличчя</span><span id="phase" class="phase">Фаза I</span></div>
+    <div class="boss-track"><div id="boss-fill"></div><span class="tick" style="left:70%"></span><span class="tick" style="left:35%"></span></div>
+    <div class="boss-meta"><span id="voice">Лівий бас</span><span id="pattern"></span><span id="beats" class="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+  </section>
+  <section class="hud-corner objective"><div class="label">Завдання</div><div id="objective"></div></section>
+  <button id="btn-menu" type="button" aria-label="Пауза">II</button>
+  <div id="prompt" class="prompt" hidden></div>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="subtitle" class="subtitle" aria-live="polite"><span id="speaker"></span><span id="line"></span></div>
+  <div id="actions" class="actions">
+    <button class="act" data-act="act" type="button" tabindex="-1"><span>Дія</span><kbd>E</kbd></button>
+    <button class="act" data-act="part" type="button" tabindex="-1"><span>Партія</span><kbd>Q</kbd></button>
+    <button class="act" data-act="parry" type="button" tabindex="-1"><span>Відбити</span><kbd>K · ПКМ</kbd></button>
+    <button class="act" data-act="dodge" type="button" tabindex="-1"><span>Ухилення</span><kbd>Space</kbd></button>
+    <button class="act" data-act="attack" type="button" tabindex="-1"><span>Удар</span><kbd>J · ЛКМ</kbd></button>
+  </div>
+  <div class="transport">♩ = 96 · 4/4 · такт <span id="bar">0</span><span id="fps" hidden></span></div>
+</div>
+<div id="touch" hidden><div id="stickzone"></div><div id="stick"><div id="stick-knob"></div></div></div>
+<div id="banner" class="banner"></div>
+
+<div id="letterbox"><div class="lb top"></div><div class="lb bottom"><span id="skip">Пропустити · Space / Enter / дотик</span></div></div>
+
+<div id="title" class="screen title">
+  <div class="title-col">
+    <div class="eyebrow">Dead Sue · вертикальний зріз 0.2 · 3D</div>
+    <h1>Хор<br>порожніх<br><em>машин</em></h1>
+    <p class="lede">Твій наказ — припинити сигнал. Але спочатку навчись його чути.</p>
+    <div class="route" aria-label="Маршрут зрізу"><span>Міст</span><span class="arr">→</span><span>Передзал і резонатор</span><span class="arr">→</span><span>Поріг</span><span class="arr">→</span><span>Зал Трьох облич</span></div>
+    <div class="btns">
+      <button id="btn-start" class="btn" type="button">Увійти до залу</button>
+      <button id="btn-fight" class="btn ghost" type="button">Одразу до бою</button>
+    </div>
+    <div class="opts">
+      <label><input id="opt-assist" type="checkbox"> Допоміжне відбиття 0,22 с</label>
+      <label><input id="opt-debug" type="checkbox"> Шар левел-дизайну</label>
+    </div>
+    <dl class="keys">
+      <div><dt>Рух</dt><dd>WASD · стрілки</dd></div>
+      <div><dt>Удар, комбо ×3</dt><dd>J · ЛКМ</dd></div>
+      <div><dt>Ухилення</dt><dd>Space</dd></div>
+      <div><dt>Відбиття</dt><dd>K · ПКМ</dd></div>
+      <div><dt>Партія, 40</dt><dd>Q</dd></div>
+      <div><dt>Дія</dt><dd>E</dd></div>
+      <div><dt>Шар ЛД</dt><dd>H</dd></div>
+      <div><dt>Пауза · звук</dt><dd>Esc · M</dd></div>
+    </dl>
+    <p class="foot">За GDD v0.1 від 14.10.2026: рух 5 м/с, ухилення 0,24 с, відбиття 0,12 с, 5 сегментів міцності, 96 BPM у 4/4, арена 24 м. Удар у долю бʼє на 60 % сильніше. Близько 10 хвилин. Краще в навушниках: голоси мають власні джерела в залі.</p>
+  </div>
+</div>
+
+<div id="pause" class="screen" hidden>
+  <div class="sheet">
+    <h2>Пауза</h2>
+    <div class="toggles">
+      <label><input id="p-assist" type="checkbox"> Допоміжне відбиття 0,22 с</label>
+      <label><input id="p-debug" type="checkbox"> Шар левел-дизайну: колайдери, зони, хітбокс</label>
+      <label><input id="p-sound" type="checkbox" checked> Звук</label>
+      <label class="lat">Затримка звуку <input id="p-lat" type="range" min="-100" max="300" step="10" value="0"> <span id="p-lat-v">0 мс</span></label>
+      <p class="hint">Для Bluetooth-навушників зсунь праворуч, доки удар у долю не збігатиметься з бітом.</p>
+    </div>
+    <div class="btns">
+      <button id="btn-resume" class="btn" type="button">Продовжити</button>
+      <button id="btn-p-fight" class="btn ghost" type="button">До бою</button>
+      <button id="btn-p-start" class="btn ghost" type="button">З початку</button>
+    </div>
+  </div>
+</div>
+
+<div id="puzzle" class="sheet" hidden>
+  <h2>Резонатор</h2>
+  <div id="p-slots" class="slots"></div>
+  <div class="regs">
+    <button type="button" data-reg="0"><span class="reg r0"><i></i><i></i><i></i></span>Низький<small>1</small></button>
+    <button type="button" data-reg="1"><span class="reg r1"><i></i><i></i><i></i></span>Середній<small>2</small></button>
+    <button type="button" data-reg="2"><span class="reg r2"><i></i><i></i><i></i></span>Високий<small>3</small></button>
+  </div>
+  <div id="p-msg"></div>
+  <div class="prow">
+    <div class="btns">
+      <button type="button" class="btn ghost" data-pz="listen">Слухати · R</button>
+      <button type="button" class="btn ghost" data-pz="back">Стерти</button>
+    </div>
+    <div class="btns">
+      <button type="button" class="btn ghost" data-pz="close">Закрити</button>
+      <button type="button" class="btn" data-pz="confirm">Підтвердити</button>
+    </div>
+  </div>
+</div>
+
+<div id="dead" class="screen center" hidden><div><h2>Носій замовк</h2><p>Повернення до порогу фази</p></div></div>
+
+<div id="end" class="screen" hidden>
+  <div class="end-col">
+    <blockquote>Тепер ти пам’ятаєш.<cite>Центральне обличчя · CS04</cite></blockquote>
+    <div class="stats">
+      <div><b id="st-time">0:00</b><span>бій</span></div>
+      <div><b id="st-hits">0</b><span>пошкоджень</span></div>
+      <div><b id="st-parries">0</b><span>відбиттів</span></div>
+      <div><b id="st-res">0</b><span>резонатор</span></div>
+      <div><b id="st-deaths">0</b><span>повернень</span></div>
+    </div>
+    <p class="foot">Кінець зрізу. За ГДД далі йде післямова: знайомий коридор, де звучав бас, тепер чути лише механічні кроки.</p>
+    <div class="btns">
+      <button id="btn-e-fight" class="btn" type="button">Пройти бій ще раз</button>
+      <button id="btn-e-start" class="btn ghost" type="button">З початку</button>
+    </div>
+  </div>
+</div>
+<div id="fade"></div>
+<div id="boot-error" hidden></div>
+<!--IMPORTMAP-->
+<!--BUNDLE-->
+<script>
+setTimeout(function () {
+  if (!window.__game) {
+    var el = document.getElementById('boot-error');
+    if (el && el.hidden) { el.hidden = false; el.textContent = 'Сцена не завантажилась: потрібен WebGL2 і доступ до cdn.jsdelivr.net. Оновіть сторінку.'; }
+  }
+}, 9000);
+</script>
