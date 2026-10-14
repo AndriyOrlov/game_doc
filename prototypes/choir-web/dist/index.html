@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171e20"><meta name="description" content="Хор порожніх машин. Ігровий вебпрототип акустичного залу: три голоси, ухилення, резонанс і наслідок перемоги.">
+<title>Хор порожніх машин</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+<section id="stage" aria-label="Ігрова арена">
+<canvas id="scene" aria-label="Носій у соборі звуків. Керуйте клавішами WASD або сенсорним стіком."></canvas>
+<div class="shade"></div>
+<header><div class="identity"><span class="eyebrow">DEAD SUE · PLAYABLE STUDY 01</span><span class="wordmark">ХОР ПОРОЖНІХ МАШИН</span></div><nav><button id="sound" aria-label="Увімкнути або вимкнути звук">Звук: увімкнено</button><button id="pause" aria-label="Пауза">Ⅱ</button></nav></header>
+<div id="hud" hidden><div class="player-status"><span class="eyebrow">НОСІЙ / 07</span><div id="health" aria-label="Міцність"></div><div class="res-row"><span>РЕЗОНАНС</span><span id="res-value">0 / 100</span></div><div class="meter"><i id="res-bar"></i></div></div><div class="mission"><span id="chapter" class="eyebrow">01 / ПРОБУДЖЕННЯ</span><span id="objective"></span></div></div>
+<div id="boss-hud" hidden><div><span>ТРИ ОБЛИЧЧЯ</span><span id="phase"></span></div><div class="boss-meter"><i id="boss-bar"></i></div><span id="telegraph"></span></div>
+<div id="caption" role="status" aria-live="polite"></div>
+<div id="hint"></div>
+<div id="intro" class="screen">
+<div class="intro-copy"><span class="eyebrow">СОБОР ЗВУКІВ / ПЕРШИЙ СИГНАЛ</span><h1>Хор<br>порожніх<br><em>машин.</em></h1><p>Твій наказ — припинити сигнал.<br>Але спочатку навчись його чути.</p><button id="start" class="primary">Увійти до залу <span>→</span></button><p class="small">Короткий вебпрототип бою й атмосфери.<br>Годинне демо та кампанія на 15 годин — у плані.</p></div><div class="intro-foot"><span>01 — ПОЧУЙ &nbsp; 02 — ВІДПОВІДАЙ &nbsp; 03 — ВИРІШИ</span><span>WASD · J удар · Space ухилення · K відбиття · Q резонанс · E дія</span></div></div>
+<div id="overlay" class="screen panel-screen" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title"><span id="panel-label" class="eyebrow"></span><h2 id="panel-title"></h2><p id="panel-text"></p><div id="panel-actions"></div></div></div>
+<div id="puzzle" class="screen panel-screen" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="puzzle-title"><span class="eyebrow">АКУСТИЧНИЙ ЗАМОК</span><h2 id="puzzle-title">Повтори мотив.</h2><p>Низький → високий → середній.<br>Звук дублюється символами: слух не обов’язковий.</p><div id="note-progress" aria-live="polite">_ &nbsp; _ &nbsp; _</div><div class="notes"><button data-note="1">Ⅰ<small>НИЗЬКИЙ</small></button><button data-note="2">Ⅱ<small>СЕРЕДНІЙ</small></button><button data-note="3">Ⅲ<small>ВИСОКИЙ</small></button></div><button id="listen">Прослухати мотив ↻</button></div></div>
+</section>
+<footer id="controls" hidden><div id="stick" aria-label="Сенсорний стік руху"><div id="stick-knob"></div><span>РУХ</span></div><div class="keyboard">WASD / стрілки — рух<br>J / клік — удар · Space — ухилення<br>K — відбиття · Q — резонанс · E — дія</div><div class="actions"><button id="interact">Дія<small>E</small></button><button id="parry">Відбити<small>K</small></button><button id="pulse">Резонанс<small>Q · 40</small></button><button id="dodge">Ухилення<small>SPACE</small></button><button id="attack" class="attack">Удар<small>J</small></button></div></footer>
+</main><script type="module" src="app.js"></script>
+</body></html>
