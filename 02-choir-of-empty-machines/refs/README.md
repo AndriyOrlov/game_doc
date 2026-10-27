@@ -6,9 +6,9 @@
 - [Аніме + манга (14)](ANIME_MANGA.md)
 - [Фільми + серіали (11)](FILMS_SERIES.md)
 - [Галерея кадрів (12)](MOODBOARD.md)
-- [29 нових авторських кадрів, реєстр](FRAMES_TO_IMPORT.md). Оптимізовані WebP **завантажено на GitHub** у папку [references](../references/README.md); оригінальні PNG збережені окремо.
+- [29 нових авторських кадрів, реєстр](../references/GENERATION_MANIFEST.md). Оптимізовані WebP **завантажено на GitHub** у папку [references](../references/README.md); оригінальні PNG збережені окремо.
 - [Матриця перенесення референсів у рівні](LEVEL_REFERENCE_MATRIX.md)
-- [LD v0.2 із прив'язкою до реальних кадрів](../LEVEL_DESIGN_V02.md) і [базовий LD v0.1](../LEVEL_DESIGN.md)
+- [Єдиний актуальний LD v0.3](../LEVEL_DESIGN.md)
 
 ## Як використовувати
 

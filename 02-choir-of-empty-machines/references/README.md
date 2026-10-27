@@ -1,6 +1,8 @@
 # Reference Art | Choir of Empty Machines
 **Оновлено:** 27.10.2026. **Завантажено:** 29 нових авторських концептів у WebP + раніше наявні PNG (без видалення). Це не скриншоти готової гри.
 
+[Маніфест усіх 29 згенерованих кадрів](GENERATION_MANIFEST.md) · [Єдиний актуальний LD](../LEVEL_DESIGN.md)
+
 ## Точна структура
 - [🎮 Gameplay — 11 нових кадрів та 4 старі PNG](gameplay/README.md): бої, exploration, puzzle, платформинг, камера.
 - [🏛 Environments — 5 концептів](environments/): нефритовий сад, небесні платформи, зарослі арени, машинний сад.
@@ -8,7 +10,7 @@
 - [🧱 Modular — 7 концептів](modular/): арена, архітектура, брами, контактні листи.
 - [Історичні кадри та storyboard](./): 01–04-reference / storyboard, GDD посилання незмінні.
 - [Матриця референсів із зовнішніх медіа](../refs/LEVEL_REFERENCE_MATRIX.md).
-- [Новий Level Design v0.2](../LEVEL_DESIGN_V02.md).
+- [Новий Level Design v0.2](../LEVEL_DESIGN.md).
 
 ## Gameplay / Puzzle
 
