@@ -4,7 +4,7 @@ title: "Хор порожніх машин"
 status: working proposal
 version: "0.3"
 updated: 2026-10-27
-source: "GDD v0.1, Demo Scenario v0.1, generated scenes 14–27 Oct 2026, refs"
+source: "GDD v0.2, Demo Scenario v0.1, generated scenes 14–27 Oct 2026, refs"
 ---
 
 # Хор порожніх машин | Level Design v0.3 (CURRENT)
