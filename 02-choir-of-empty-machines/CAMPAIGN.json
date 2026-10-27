@@ -1,5 +1,5 @@
 {
-  "version": "0.7",
+  "version": "0.8",
   "updated": "2026-10-27",
   "status": "working_proposal",
   "target_minutes": 180,
@@ -74,7 +74,14 @@
         "PZ-09"
       ],
       "new_note": "ре",
-      "image": "references/atmosphere-v07/01-keyframe.jpg"
+      "image": "references/style-v08/01-endless-hall.jpg",
+      "gameplay_spec": "L01_GAMEPLAY.md",
+      "blockout": "L01_BLOCKOUT.json",
+      "tested_minutes": null,
+      "first_pass_range_minutes": [
+        20,
+        30
+      ]
     },
     {
       "id": "L02",
@@ -395,5 +402,12 @@
     "Нові пропси",
     "GIF та фінальні анімації",
     "Повний діалоговий сценарій"
-  ]
+  ],
+  "style_direction": "STYLE_DIRECTION_v08.md",
+  "design_priority": "gameplay first: objective, response, consequence, route before environment dressing",
+  "style": {
+    "space": "endless monumental halls, airy depth and platforms",
+    "detail": "few simple large masses; minimum unique environment props",
+    "frame_status": "two new concepts under review, not user-approved final images"
+  }
 }

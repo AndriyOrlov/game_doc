@@ -1,3 +1,5 @@
+> Актуальний пошук v0.8: [повітряна монументальність](02-choir-of-empty-machines/STYLE_DIRECTION_v08.md) та [ігровий план демо](02-choir-of-empty-machines/L01_GAMEPLAY.md).
+
 > Поточний план 27.10.2026: [візуальна біблія v0.7](02-choir-of-empty-machines/ART_DIRECTION.md), робоча ціль близько 3 годин. Старі згадки 15 год і демо 60+ хв нижче є історичними.
 
 # Game Doc
