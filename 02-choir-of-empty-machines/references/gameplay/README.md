@@ -1,21 +1,27 @@
-# Gameplay frames | Choir of Empty Machines
+# Gameplay references | Choir of Empty Machines
 
-Це справжні PNG з попередніх генерацій, скопійовані до цієї папки без змін і без втрати якості (Git blobs повторно використовуються за SHA).
+Тут **усі наявні згенеровані геймплейні кадри**. Нові (27.10) збережені як оптимізовані WebP із оригінальних PNG; попередні PNG залишені. Назви кадрів і місце застосування в [LD v0.2](../../LEVEL_DESIGN_V02.md).
 
-| Кадр | Тип | Що аналізувати | Куди переносимо |
-|---|---|---|---|
-| [06 — Combat](06-gameplay-combat.png) | Battle + HUD | Три голоси, сектори руху, кільцеві атаки, констраст підлоги | D6, бос «Три обличчя» |
-| [07 — Exploration](07-gameplay-exploration.png) | Exploration | Масштаб героя, пошук джерела голосу, шлях крізь акустичне місто | D1, D3 |
-| [08 — Interaction](08-gameplay-interaction.png) | Puzzle + HUD | Прямий зв'язок джерело → резонатор → брама, візуальний feedback | D2, D3 |
-| [05 — Arena plan](05-arena-plan.png) | Plan / greybox | Чиста бойова площина, вхід на півдні, бос на півночі | D6 |
+## Нові кадри
 
-## Нові кадри 27.10.2026
+| Кадр | Що беремо | Рівень |
+|---|---|---|
+| ![Platform](01-platform-combat.webp) | чиста бойова площина, telegraph, безпечний сектор | D3 |
+| ![Hall](02-monumental-hall-exploration.webp) | фонова домінанта, маршрут, hero scale | D1, C5 |
+| ![Regulator](03-night-acoustic-regulator.webp) | світло як підказка, інтерактивний резонатор | D2, C4 |
+| ![Service lamp](04-residential-courtyard-service-lamp.webp) | історія через сервісні пропси | C2 |
+| ![Subarchive](05-acoustic-branch-in-subarchive.webp) | читабельна розвилка main / optional | C4 |
+| ![Factory](06-pressure-factory-nightshift.webp) | промислові труби, одне джерело тиску | C2 |
+| ![Maze](07-dark-maze-echo-beacon.webp) | сонарний імпульс освітлює тимчасовий шлях | C4 |
+| ![Automaton](09-automaton-in-acoustic-factory.webp) | дрібний ворог у просторій архітектурі | C2 |
+| ![Crimson lotus](10-crimson-lotus-arena.webp) | кругова арена, навігація довкола органіки | C3 |
+| ![Two bowls](11-two-resonance-bowls.webp) | пара резонансних чаш із feedback | D2, C3 |
+| ![Greenhouse](12-flooded-greenhouse-puzzle.webp) | мости, вода і puzzle node | C3 |
 
-Назви нових генерацій, включно з «Бій на підвішеній акустичній платформі» та «Монументальна акустична зала: шлях героїні», внесені у [реєстр](../../refs/FRAMES_TO_IMPORT.md). Їхні PNG поки не перебувають у цьому репозиторії: у GitHub не виконано бінарного імпорту цих файлів. 29 оригінальних PNG зібрано в ZIP `Choir_GDD_References_27Oct2026.zip`, наданий у чаті. В архіві є 16 файлів у папці `references/gameplay/new/` і 13 у `references/generated/`; вони ще не залиті на GitHub.
+## Початкові PNG (без змін)
+- [05 — схема арени](05-arena-plan.png), D6.
+- [06 — бій із HUD](06-gameplay-combat.png), D6.
+- [07 — дослідження](07-gameplay-exploration.png), D1/D3.
+- [08 — взаємодія](08-gameplay-interaction.png), D2/D3.
 
-## Обов'язковий стандарт для нових кадрів
-
-1. У кожному gameplay-концепті присутні **керований герой, ігрова камера, HUD, конкретна дія, результат ігрової дії**.
-2. Для документації допускаються аннотаційні виноски, але вони відділені від HUD.
-3. Після додавання нового PNG додати його в цю таблицю і в LD, не переписуючи старе джерело.
-4. Скріншот генерації не є скриншотом working prototype або доказом розмірів арени.
+**Принцип:** у кожному геймплейному кадрі потрібно зчитати *герой / ігрова камера / активна дія / однозначний результат*. Це концепт, а не screen capture робочого прототипу.
