@@ -15,3 +15,8 @@
 | TOOLS | Чим створюємо і що ще не обрано |
 | PRODUCTION | Що робимо спочатку і чим ризикуємо |
 | PLAYTEST | Що має довести прототип |
+
+
+## Активна редакція 0.7
+
+[Атмосфера](../02-choir-of-empty-machines/ART_DIRECTION.md) · [6 рівнів](../02-choir-of-empty-machines/LEVEL_DESIGN.md) · [12 задач](../02-choir-of-empty-machines/PUZZLES.md). Історичні картки Cxx і 15-годинний кошторис не задають поточний обсяг.
