@@ -132,7 +132,8 @@
       "a": "P1",
       "b": "P2",
       "width": 3,
-      "route": "bridge"
+      "route": "bridge",
+      "gate_id": "G01"
     },
     {
       "a": "P2",
@@ -140,19 +141,22 @@
       "width": 3,
       "route": "stairs",
       "rise": 3,
-      "run": 12
+      "run": 12,
+      "gate_id": "G02"
     },
     {
       "a": "P3",
       "b": "P4",
       "width": 3,
-      "route": "bridge"
+      "route": "bridge",
+      "gate_id": "G03"
     },
     {
       "a": "P4",
       "b": "P5",
       "width": 3,
-      "route": "bridge"
+      "route": "bridge",
+      "gate_id": "G04"
     },
     {
       "a": "P5",
@@ -164,17 +168,83 @@
       "a": "P6",
       "b": "P7",
       "width": 4,
-      "route": "bridge"
+      "route": "bridge",
+      "gate_id": "G05"
     },
     {
       "a": "P7",
       "b": "P8",
       "width": 3,
-      "route": "bridge"
+      "route": "bridge",
+      "gate_id": "G06"
     }
   ],
   "boss_retry": "checkpoint at P6 exit; returns here with full HP/repair capacity; PZ remain solved",
   "shortcuts": "service gate P5↔P0 opens after P4; no critical route needs backtracking",
   "edge_rule": "calm demo edges prevent accidental movement off a platform; physical outer lip or consistent architectural field boundary, visible and taught on P0; no instant death from ordinary evade",
-  "jump_required": false
+  "jump_required": false,
+  "gates": [
+    {
+      "id": "G01",
+      "from": "P1",
+      "to": "P2",
+      "type": "telescopic_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "PZ-01",
+      "stays_open": true
+    },
+    {
+      "id": "G02",
+      "from": "P2",
+      "to": "P3",
+      "type": "telescopic_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "Тактовик завершений",
+      "stays_open": true
+    },
+    {
+      "id": "G03",
+      "from": "P3",
+      "to": "P4",
+      "type": "telescopic_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "PZ-08",
+      "stays_open": true
+    },
+    {
+      "id": "G04",
+      "from": "P4",
+      "to": "P5",
+      "type": "telescopic_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "PZ-09",
+      "stays_open": true
+    },
+    {
+      "id": "G05",
+      "from": "P6",
+      "to": "P7",
+      "type": "telescopic_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "дві хвилі P6",
+      "stays_open": false
+    },
+    {
+      "id": "G06",
+      "from": "P7",
+      "to": "P8",
+      "type": "hinged_double_door_or_rod_gate",
+      "clear_width_m": 4,
+      "unlock_condition": "бос завершений, шкода знята",
+      "stays_open": true
+    }
+  ],
+  "gate_contract": {
+    "scope": "L01 only; concept and blockout proposal",
+    "occupied_threshold": "cancel closing and reopen; no damage",
+    "boss_start": "wait until gate closed, camera stable and visible preparation complete",
+    "boss_retry_gate": "G05 open ready; P6 waves remain completed; only boss resets",
+    "collision": "moving parts agree with visible geometry; no invisible wall across a visibly clear opening",
+    "camera": "test arch occlusion in top-down and 3/4"
+  }
 }
