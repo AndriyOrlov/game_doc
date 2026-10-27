@@ -1,25 +1,96 @@
 <!doctype html>
 <html lang="uk">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#171e20"><meta name="description" content="Хор порожніх машин. Ігровий вебпрототип акустичного залу: три голоси, ухилення, резонанс і наслідок перемоги.">
-<title>Хор порожніх машин</title><link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Поріг тиші</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Хор порожніх машин · вебпрототип 0.8. Рівень L01: дві головоломки, Тактовик і Рупор, бос Три обличчя.">
+<meta name="theme-color" content="#cfd7db">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Forum&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 <main id="app">
-<section id="stage" aria-label="Ігрова арена">
-<canvas id="scene" aria-label="Носій у соборі звуків. Керуйте клавішами WASD або сенсорним стіком."></canvas>
-<div class="shade"></div>
-<header><div class="identity"><span class="eyebrow">DEAD SUE · PLAYABLE STUDY 01</span><span class="wordmark">ХОР ПОРОЖНІХ МАШИН</span></div><nav><button id="sound" aria-label="Увімкнути або вимкнути звук">Звук: увімкнено</button><button id="pause" aria-label="Пауза">Ⅱ</button></nav></header>
-<div id="hud" hidden><div class="player-status"><span class="eyebrow">НОСІЙ / 07</span><div id="health" aria-label="Міцність"></div><div class="res-row"><span>РЕЗОНАНС</span><span id="res-value">0 / 100</span></div><div class="meter"><i id="res-bar"></i></div></div><div class="mission"><span id="chapter" class="eyebrow">01 / ПРОБУДЖЕННЯ</span><span id="objective"></span></div></div>
-<div id="boss-hud" hidden><div><span>ТРИ ОБЛИЧЧЯ</span><span id="phase"></span></div><div class="boss-meter"><i id="boss-bar"></i></div><span id="telegraph"></span></div>
-<div id="caption" role="status" aria-live="polite"></div>
-<div id="hint"></div>
-<div id="intro" class="screen">
-<div class="intro-copy"><span class="eyebrow">СОБОР ЗВУКІВ / ПЕРШИЙ СИГНАЛ</span><h1>Хор<br>порожніх<br><em>машин.</em></h1><p>Твій наказ — припинити сигнал.<br>Але спочатку навчись його чути.</p><button id="start" class="primary">Увійти до залу <span>→</span></button><p class="small">Короткий вебпрототип бою й атмосфери.<br>Годинне демо та кампанія на 15 годин — у плані.</p></div><div class="intro-foot"><span>01 — ПОЧУЙ &nbsp; 02 — ВІДПОВІДАЙ &nbsp; 03 — ВИРІШИ</span><span>WASD · J удар · Space ухилення · K відбиття · Q резонанс · E дія</span></div></div>
-<div id="overlay" class="screen panel-screen" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title"><span id="panel-label" class="eyebrow"></span><h2 id="panel-title"></h2><p id="panel-text"></p><div id="panel-actions"></div></div></div>
-<div id="puzzle" class="screen panel-screen" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="puzzle-title"><span class="eyebrow">АКУСТИЧНИЙ ЗАМОК</span><h2 id="puzzle-title">Повтори мотив.</h2><p>Низький → високий → середній.<br>Звук дублюється символами: слух не обов’язковий.</p><div id="note-progress" aria-live="polite">_ &nbsp; _ &nbsp; _</div><div class="notes"><button data-note="1">Ⅰ<small>НИЗЬКИЙ</small></button><button data-note="2">Ⅱ<small>СЕРЕДНІЙ</small></button><button data-note="3">Ⅲ<small>ВИСОКИЙ</small></button></div><button id="listen">Прослухати мотив ↻</button></div></div>
-</section>
-<footer id="controls" hidden><div id="stick" aria-label="Сенсорний стік руху"><div id="stick-knob"></div><span>РУХ</span></div><div class="keyboard">WASD / стрілки — рух<br>J / клік — удар · Space — ухилення<br>K — відбиття · Q — резонанс · E — дія</div><div class="actions"><button id="interact">Дія<small>E</small></button><button id="parry">Відбити<small>K</small></button><button id="pulse">Резонанс<small>Q · 40</small></button><button id="dodge">Ухилення<small>SPACE</small></button><button id="attack" class="attack">Удар<small>J</small></button></div></footer>
-</main><script type="module" src="app.js"></script>
-</body></html>
+  <canvas id="scene" aria-label="Носій 07 на платформах акустичного залу"></canvas>
+  <div id="vignette" aria-hidden="true"></div>
+
+  <section id="hud" hidden>
+    <div class="hud-left">
+      <div id="hp" class="hp" role="img" aria-label="Міцність 5 з 5"></div>
+      <div class="repair" title="Ремонтні заряди · R"><span class="repair-icon" aria-hidden="true"></span><span id="repairs">2</span></div>
+    </div>
+    <div id="boss" class="boss" hidden>
+      <span class="boss-name">Три обличчя</span>
+      <div class="boss-bar"><i id="boss-fill"></i></div>
+      <div class="boss-dots"><i></i><i></i><i></i></div>
+      <span id="boss-voice" class="boss-voice"></span>
+    </div>
+    <div class="hud-right">
+      <div id="objective" class="objective"><span class="obj-mark" aria-hidden="true"></span><span id="objective-text"></span></div>
+      <div class="sys">
+        <button id="hint-btn" type="button" title="Підказка · H">Підказка</button>
+        <button id="sound-btn" type="button" title="Звук">Звук</button>
+        <button id="pause-btn" type="button" title="Пауза · Esc" aria-label="Пауза">Ⅱ</button>
+      </div>
+    </div>
+    <div class="notes">
+      <div id="note-do" class="note"><span class="glyph">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v8a4 4 0 0 0 8 0V3M12 15v7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><b>До</b><kbd>K</kbd><i class="cd"></i></div>
+      <div id="note-re" class="note locked"><span class="glyph">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-4 5-2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span><b>Ре</b><kbd>L</kbd><i class="cd"></i></div>
+    </div>
+    <div id="prompt" class="prompt" hidden><kbd>E</kbd><span id="prompt-text"></span></div>
+    <div id="repair-ring" class="repair-ring" hidden><i></i><span>Ремонт</span></div>
+    <p id="caption" class="caption" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="title" class="screen">
+    <div class="title-card">
+      <p class="kicker">Хор порожніх машин · L01</p>
+      <h1>Поріг<br>тиші</h1>
+      <p class="lede">Носій 07 має припинити сигнал за мостом. Дві задачі, двоє рядових машин і Три обличчя на траверсі.</p>
+      <button id="start" type="button" class="primary">Увійти <span aria-hidden="true">→</span></button>
+      <dl class="keys">
+        <div><dt>WASD</dt><dd>рух</dd></div>
+        <div><dt>J · клік</dt><dd>удар</dd></div>
+        <div><dt>Space</dt><dd>ухилення</dd></div>
+        <div><dt>K</dt><dd>до · повернути позначений імпульс</dd></div>
+        <div><dt>L · Shift</dt><dd>ре · крок відлуння</dd></div>
+        <div><dt>R</dt><dd>ремонт</dd></div>
+        <div><dt>E</dt><dd>дія</dd></div>
+        <div><dt>H</dt><dd>підказка</dd></div>
+      </dl>
+      <p class="fine rotate">На телефоні краще тримати горизонтально.</p>
+      <p class="fine">Вебпрототип 0.8 за GDD v0.8 і планом L01. Не UE-білд і не фінальна графіка.</p>
+    </div>
+  </section>
+
+  <section id="panel" class="screen panel-screen" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+      <p id="panel-kicker" class="kicker"></p>
+      <h2 id="panel-title"></h2>
+      <p id="panel-text"></p>
+      <div id="panel-stats" class="stats"></div>
+      <div id="panel-actions" class="actions"></div>
+    </div>
+  </section>
+
+  <section id="touch" hidden>
+    <div id="stick-zone" aria-label="Зона руху"><div id="stick"><i id="knob"></i></div></div>
+    <div class="pad">
+      <button type="button" data-act="interact" id="t-interact" class="t small" hidden>Дія</button>
+      <button type="button" data-act="repair" class="t small">Рем.</button>
+      <button type="button" data-act="re" id="t-re" class="t small">Ре</button>
+      <button type="button" data-act="parry" class="t">До</button>
+      <button type="button" data-act="dodge" class="t">Ухил.</button>
+      <button type="button" data-act="attack" class="t big">Удар</button>
+    </div>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
